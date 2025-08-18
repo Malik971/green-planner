@@ -1,42 +1,37 @@
-// src/theme/index.ts
-import { extendTheme } from "@chakra-ui/theme-utils";
+import { extendTheme } from "@chakra-ui/react";
 
 const theme = extendTheme({
   colors: {
-    brand: {
-      50: "#f5fbe9",
-      100: "#e0f1c8",
-      200: "#c9e5a4",
-      300: "#b0d980",
-      400: "#96ce5d",
-      500: "#7cb544",     // 💚 Vert forêt (principal)
-      600: "#639031",
-      700: "#496c1e",
-      800: "#2f490c",
-      900: "#152700",
-      gold: "#d4af37",     // ✨ Doré
+    sandaya: {
+      doré: "#AC9B6A",       // teinte dorée Sandaya
+      jaune: "#fbbb21",     // vert nature (Chakra vert foncé)
+      ciel: "#3182CE",        // bleu doux pour accents
     },
   },
-  fonts: {
-    heading: `'Segoe UI', sans-serif`,
-    body: `'Segoe UI', sans-serif`,
+  styles: {
+    global: {
+      "body": {
+        bg: "whiteAlpha.50",
+        color: "gray.800",
+      },
+      "header, footer": {
+        bg: "sandaya.doré",
+        color: "white",
+      },
+    },
   },
   components: {
     Button: {
       variants: {
-        solid: {
-          bg: "brand.500",
+        doré: {
+          bg: "sandaya.doré",
           color: "white",
-          _hover: {
-            bg: "brand.600",
-          },
+          _hover: { bg: "sandaya.végétal" },
         },
-        gold: {
-          bg: "brand.gold",
-          color: "black",
-          _hover: {
-            bg: "yellow.400",
-          },
+        ciel: {
+          bg: "sandaya.ciel",
+          color: "white",
+          _hover: { bg: "blue.600" },
         },
       },
     },

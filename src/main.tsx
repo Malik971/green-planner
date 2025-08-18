@@ -19,7 +19,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/calendar",
+    path: "/calendar/:team",
     element: (
       <Layout>
         <CalendarPage />
