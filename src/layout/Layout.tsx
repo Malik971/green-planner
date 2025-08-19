@@ -31,7 +31,12 @@ export default function Layout({ children }: LayoutProps) {
         shadow="sm"
       >
         <Flex justify="space-between" align="center">
-          <Text fontSize="xl" fontWeight="bold">
+          <Text
+            fontSize="xl"
+            fontWeight="bold"
+            cursor="pointer"
+            onClick={() => navigate("/")}
+          >
             Sandaya – Plein Air des Chênes 🌴
           </Text>
 

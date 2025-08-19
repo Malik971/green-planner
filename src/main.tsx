@@ -5,11 +5,16 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./layout/Layout";
 import Home from "./pages/Home";
 import CalendarPage from "./pages/Calendar";
+import PlanningBar from "./pages/PlanningBar";
+import LoginPage from "./pages/Login";
 
 import { ChakraProvider } from "@chakra-ui/react";
-import theme from "./theme/index.ts"; // ✅ ton thème perso
+import theme from "./theme/index.ts";
+import { AuthProvider } from "./features/auth/useAuth.ts";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 const router = createBrowserRouter([
+  { path: "/login", element: <LoginPage /> },
   {
     path: "/",
     element: (
@@ -22,7 +27,19 @@ const router = createBrowserRouter([
     path: "/calendar/:team",
     element: (
       <Layout>
-        <CalendarPage />
+        <ProtectedRoute>
+          <CalendarPage />
+        </ProtectedRoute>
+      </Layout>
+    ),
+  },
+  {
+    path: "/calendar/bar", // ✅ Nouveau chemin
+    element: (
+      <Layout>
+        <ProtectedRoute>
+          <PlanningBar />
+        </ProtectedRoute>
       </Layout>
     ),
   },
@@ -31,7 +48,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ChakraProvider theme={theme}>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </ChakraProvider>
   </StrictMode>
 );

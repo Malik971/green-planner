@@ -17,7 +17,7 @@ export default function Home() {
       <VStack spacing={6} maxW="5xl" mx="auto">
         {/* Titre principal */}
         <Heading as="h1" size="2xl" color="sandaya.gold">
-          Sandaya Planner
+          Sandaya Planning Manager
         </Heading>
 
         <Text fontSize="lg" color="gray.700">
