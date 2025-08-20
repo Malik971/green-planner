@@ -51,6 +51,16 @@ export default function Layout({ children }: LayoutProps) {
               Accueil
             </Button>
 
+            {/* 👇 Bouton Login */}
+            <Button
+              variant="ghost"
+              color="white"
+              _hover={{ bg: "sandaya.jaune" }}
+              onClick={() => navigate("/login")}
+            >
+              Connexion
+            </Button>
+
             {/* Menu déroulant Planning */}
             <Menu>
               <MenuButton

@@ -34,10 +34,10 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/calendar/bar", // ✅ Nouveau chemin
+    path: "/calendar/bar",
     element: (
       <Layout>
-        <ProtectedRoute>
+        <ProtectedRoute allowed={["admin", "manager"]}>
           <PlanningBar />
         </ProtectedRoute>
       </Layout>
