@@ -12,6 +12,8 @@ import { ChakraProvider } from "@chakra-ui/react";
 import theme from "./theme/index.ts";
 import { AuthProvider } from "./features/auth/useAuth.ts";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import PlanningAnimation from "./pages/PlanningAnimation";
+
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
@@ -43,6 +45,16 @@ const router = createBrowserRouter([
       </Layout>
     ),
   },
+  {
+  path: "/animations",
+  element: (
+    <Layout>
+      <ProtectedRoute>
+        <PlanningAnimation />
+      </ProtectedRoute>
+    </Layout>
+  ),
+},
 ]);
 
 createRoot(document.getElementById("root")!).render(

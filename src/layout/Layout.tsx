@@ -9,8 +9,10 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Spacer,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../features/auth/useAuth";
 
 type LayoutProps = {
   children: ReactNode;
@@ -18,18 +20,12 @@ type LayoutProps = {
 
 export default function Layout({ children }: LayoutProps) {
   const navigate = useNavigate();
+  const { user, role, employee, signOutApp } = useAuth();
 
   return (
     <Flex direction="column" minHeight="100vh">
       {/* Header */}
-      <Box
-        as="header"
-        bg="sandaya.doré"
-        color="white"
-        py={4}
-        px={8}
-        shadow="sm"
-      >
+      <Box as="header" bg="sandaya.doré" color="white" py={4} px={8} shadow="sm">
         <Flex justify="space-between" align="center">
           <Text
             fontSize="xl"
@@ -49,16 +45,6 @@ export default function Layout({ children }: LayoutProps) {
               onClick={() => navigate("/")}
             >
               Accueil
-            </Button>
-
-            {/* 👇 Bouton Login */}
-            <Button
-              variant="ghost"
-              color="white"
-              _hover={{ bg: "sandaya.jaune" }}
-              onClick={() => navigate("/login")}
-            >
-              Connexion
             </Button>
 
             {/* Menu déroulant Planning */}
@@ -106,6 +92,36 @@ export default function Layout({ children }: LayoutProps) {
                 </MenuItem>
               </MenuList>
             </Menu>
+
+            {/* Connexion / Déconnexion */}
+            {!user ? (
+              <Button
+                variant="ghost"
+                color="white"
+                _hover={{ bg: "sandaya.jaune" }}
+                onClick={() => navigate("/login")}
+              >
+                Connexion
+              </Button>
+            ) : (
+              <>
+                <Text fontSize="sm" color="white">
+                  <strong>{employee ?? "Utilisateur"}</strong>
+                  {role ? ` (${role})` : ""}
+                </Text>
+                <Button
+                  variant="ghost"
+                  color="white"
+                  _hover={{ bg: "sandaya.jaune" }}
+                  onClick={async () => {
+                    await signOutApp();
+                    navigate("/");
+                  }}
+                >
+                  Déconnexion
+                </Button>
+              </>
+            )}
           </HStack>
         </Flex>
       </Box>

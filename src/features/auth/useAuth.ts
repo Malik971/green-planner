@@ -9,6 +9,7 @@ type Role = "admin" | "manager" | "staff" | null;
 type AuthState = {
   user: User | null;
   role: Role;
+  employee: string | null;
   team: string | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
@@ -20,6 +21,7 @@ const AuthCtx = createContext<AuthState | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<Role>(null);
+  const [employee, setEmployee] = useState<string | null>(null);  
   const [team, setTeam] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -41,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const data = snap.data();
         setRole((data?.role as Role) ?? null);
         setTeam((data?.team as string) ?? null);
+        setEmployee((data?.employee as string) ?? null);
         setLoading(false);
       }, () => setLoading(false));
 
@@ -59,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signOut(auth);
   };
 
-  const value: AuthState = { user, role, team, loading, signIn, signOutApp };
+  const value: AuthState = { user, role, team, employee, loading, signIn, signOutApp };
   return React.createElement(AuthCtx.Provider, { value }, children);
 }
 
