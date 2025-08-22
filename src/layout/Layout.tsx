@@ -9,7 +9,6 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  Spacer,
   Image,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";

@@ -2,11 +2,32 @@ import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import { fr } from "date-fns/locale/fr";
-import { Box, Heading, Flex, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  Flex,
+  Text,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionIcon,
+  AccordionPanel,
+  Wrap,
+  WrapItem,
+  Button,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { addDoc, collection, onSnapshot, Timestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  Timestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { useParams } from "react-router-dom";
 import { db } from "../services/firebase";
+import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 
 const locales = { fr };
 
@@ -26,12 +47,23 @@ const legend = [
   { name: "Anaelle", color: "#F6AD55" }, // orange
   { name: "Malik", color: "#2B6CB0" }, // bleu foncé
   { name: "Lolo", color: "#ED8936" }, // orange clair
+  { name: "Axel", color: "#4FD1C5" }, // turquoise
 ];
 
-const legendMap: Record<string, string> = legend.reduce(
-  (acc, l) => ({ ...acc, [l.name]: l.color }),
-  {}
-);
+const activities = [
+  { title: "Club enfants", duration: 90 }, // en minutes
+  { title: "Club ados avec Malik", duration: 90 },
+  { title: "Tournoi de foot", duration: 120 },
+  { title: "Fitness avec Anaelle", duration: 60 },
+  { title: "Aquagym avec Anaelle", duration: 60 },
+  { title: "Beach Volley avec Axel", duration: 90 },
+  { title: "Soirée Karaoké", duration: 180 },
+  { title: "Mini Disco avec Leane", duration: 60 },
+  { title: "Spectacle de magie avec Pepito", duration: 60 },
+  { title: "Atelier créatif avec Carla", duration: 60 },
+];
+
+const DnDCalendar = withDragAndDrop<EventType, object>(Calendar);
 
 type EventType = {
   id?: string;
@@ -46,6 +78,10 @@ export default function CalendarPage() {
   const [title, setTitle] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
+  const [selectedActivity, setSelectedActivity] = useState<null | {
+    title: string;
+    duration: number;
+  }>(null);
 
   useEffect(() => {
     if (!team) return;
@@ -82,13 +118,48 @@ export default function CalendarPage() {
     setEnd("");
   };
 
+  const handleSlotDrop = async (slotInfo: any) => {
+    const activityData = slotInfo.boxEvent?.dataTransfer?.getData("activity"); // récupère l'activité
+    if (!activityData || !team) return;
+
+    const act = JSON.parse(activityData);
+    const startDate = new Date(slotInfo.start);
+    const endDate = new Date(startDate.getTime() + act.duration * 60000);
+
+    await addDoc(collection(db, `events-${team}`), {
+      title: act.title,
+      start: Timestamp.fromDate(startDate),
+      end: Timestamp.fromDate(endDate),
+    });
+  };
+
+  // Déplacement d’un événement (drag & drop)
+  const handleEventDrop = async ({ event, start, end }: any) => {
+    if (!team || !event.id) return;
+    const ref = doc(db, `events-${team}`, event.id);
+    await updateDoc(ref, {
+      start: Timestamp.fromDate(new Date(start)),
+      end: Timestamp.fromDate(new Date(end)),
+    });
+  };
+
+  // Redimensionnement (changement de durée)
+  const handleEventResize = async ({ event, start, end }: any) => {
+    if (!team || !event.id) return;
+    const ref = doc(db, `events-${team}`, event.id);
+    await updateDoc(ref, {
+      start: Timestamp.fromDate(new Date(start)),
+      end: Timestamp.fromDate(new Date(end)),
+    });
+  };
+
   return (
     <Box p={6}>
       <Heading mb={6}>Planning {team ? `de l’équipe ${team}` : ""}</Heading>
 
       <Flex>
         {/* Légende */}
-        <Box flex="1" ml={6}>
+        <Box flex="1.5" ml={6}>
           <Heading size="md" mb={4}>
             Légende Animateurs
           </Heading>
@@ -98,17 +169,79 @@ export default function CalendarPage() {
               <Text>{l.name}</Text>
             </Flex>
           ))}
+          {/* Panneau d’activités repliable + scrollable */}
+          <Accordion allowToggle mt={6} defaultIndex={[0]}>
+            <AccordionItem
+              border="1px solid #eee"
+              borderRadius="md"
+              overflow="hidden"
+            >
+              <AccordionButton _expanded={{ bg: "gray.100" }}>
+                <Box
+                  as="span"
+                  flex="1"
+                  textAlign="left"
+                  fontWeight="semibold"
+                  maxH="220px"
+                >
+                  📌 Activités disponibles
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel p={3}>
+                <Box
+                  maxH="220px"
+                  overflowY="auto"
+                  pr={1}
+                  border="1px solid"
+                  borderColor="gray.200"
+                  borderRadius="md"
+                  p={2}
+                  bg="white"
+                >
+                  <Wrap spacing={2}>
+                    {activities.map((act) => {
+                      const isActive = selectedActivity?.title === act.title;
+                      return (
+                        <WrapItem key={act.title}>
+                          <Button
+                            size="sm"
+                            variant={isActive ? "solid" : "outline"}
+                            colorScheme={isActive ? "blue" : "gray"}
+                            onClick={() =>
+                              setSelectedActivity(isActive ? null : act)
+                            }
+                            title={`${act.duration} min`}
+                          >
+                            {act.title}
+                          </Button>
+                        </WrapItem>
+                      );
+                    })}
+                  </Wrap>
+                </Box>
+
+                <Text mt={3} fontSize="sm" color="gray.600">
+                  1) Cliquez une activité • 2) Sélectionnez un créneau dans le
+                  calendrier (cliquer/glisser) • 3) L’événement est créé.
+                </Text>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
         </Box>
         {/* Calendrier */}
         <Box flex="5">
-          <Calendar
+          <DnDCalendar
             localizer={localizer}
             events={events}
-            startAccessor="start"
-            endAccessor="end"
+            startAccessor={(event: EventType) => event.start}
+            endAccessor={(event: EventType) => event.end}
             style={{ height: 632 }}
-            // defaultView="week"
+            defaultView="week"
             // views={["week", "day"]}
+            onEventDrop={handleEventDrop}
+            onEventResize={handleEventResize}
+            onSelectSlot={(slotInfo) => handleSlotDrop(slotInfo)}
             min={new Date(1970, 1, 1, 10, 0)} // ⏰ commence à 10h
             max={new Date(1970, 1, 1, 23, 0)} // ⏰ finit à 23h
             messages={{
