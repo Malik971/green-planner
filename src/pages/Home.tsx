@@ -1,6 +1,21 @@
-import { Button, Heading, Text, VStack, Box, SimpleGrid, Card, CardBody, Icon } from "@chakra-ui/react";
+import {
+  Button,
+  Heading,
+  Text,
+  VStack,
+  Box,
+  SimpleGrid,
+  Card,
+  CardBody,
+  Icon,
+} from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { FaGlassMartiniAlt, FaSwimmer, FaUmbrellaBeach, FaConciergeBell } from "react-icons/fa";
+import {
+  FaGlassMartiniAlt,
+  FaSwimmer,
+  FaUmbrellaBeach,
+  FaConciergeBell,
+} from "react-icons/fa";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -8,7 +23,11 @@ export default function Home() {
   const plannings = [
     { name: "Animation", icon: FaUmbrellaBeach, path: "/calendar/animation" },
     { name: "Bar", icon: FaGlassMartiniAlt, path: "/calendar/bar" },
-    { name: "Surveillance de baignade", icon: FaSwimmer, path: "/calendar/pool" },
+    {
+      name: "Surveillance de baignade",
+      icon: FaSwimmer,
+      path: "/calendar/pool",
+    },
     { name: "Réception", icon: FaConciergeBell, path: "/calendar/reception" },
   ];
 
@@ -25,8 +44,9 @@ export default function Home() {
         </Text>
 
         <Text fontSize="md" color="gray.600">
-          Animation, bar, piscine, réception… chaque service dispose de son espace dédié.  
-          Les chefs d’équipe peuvent modifier, les membres consultent.
+          Animation, bar, piscine, réception… chaque service dispose de son
+          espace dédié. Les chefs d’équipe peuvent modifier, les membres
+          consultent.
         </Text>
 
         {/* Liste des plannings */}
@@ -37,12 +57,21 @@ export default function Home() {
               border="1px solid"
               borderColor="sandaya.doré"
               shadow="sm"
-              _hover={{ shadow: "md", cursor: "pointer", transform: "scale(1.02)" }}
+              _hover={{
+                shadow: "md",
+                cursor: "pointer",
+                transform: "scale(1.02)",
+              }}
               transition="all 0.2s"
               onClick={() => navigate(planning.path)}
             >
               <CardBody textAlign="center">
-                <Icon as={planning.icon} boxSize={10} color="sandaya.gold" mb={4} />
+                <Icon
+                  as={planning.icon}
+                  boxSize={10}
+                  color="sandaya.gold"
+                  mb={4}
+                />
                 <Heading size="md" color="sandaya.green">
                   {planning.name}
                 </Heading>
@@ -67,7 +96,7 @@ export default function Home() {
         <Button
           mt={10}
           size="lg"
-          bg="sandaya.gold"
+          colorScheme="cyan"
           color="white"
           backgroundColor="sandaya.green"
           _hover={{ bg: "sandaya.green" }}

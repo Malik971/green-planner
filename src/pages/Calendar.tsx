@@ -107,8 +107,8 @@ export default function CalendarPage() {
             startAccessor="start"
             endAccessor="end"
             style={{ height: 632 }}
-            defaultView="week"
-            views={["week", "day"]}
+            // defaultView="week"
+            // views={["week", "day"]}
             min={new Date(1970, 1, 1, 10, 0)} // ⏰ commence à 10h
             max={new Date(1970, 1, 1, 23, 0)} // ⏰ finit à 23h
             messages={{

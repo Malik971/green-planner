@@ -10,15 +10,17 @@ import {
   MenuList,
   MenuItem,
   Spacer,
+  Image,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 
 type LayoutProps = {
   children: ReactNode;
+  logoSrc?: string;
 };
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children, logoSrc }: LayoutProps) {
   const navigate = useNavigate();
   const { user, role, employee, signOutApp } = useAuth();
 
@@ -27,14 +29,20 @@ export default function Layout({ children }: LayoutProps) {
       {/* Header */}
       <Box as="header" bg="sandaya.doré" color="white" py={4} px={8} shadow="sm">
         <Flex justify="space-between" align="center">
-          <Text
-            fontSize="xl"
-            fontWeight="bold"
-            cursor="pointer"
-            onClick={() => navigate("/")}
-          >
-            Sandaya – Plein Air des Chênes 🌴
-          </Text>
+          <Flex align="center" cursor="pointer" onClick={() => navigate("/")}>
+            {
+              <Text fontSize="xl" fontWeight="bold">
+                Sandaya – Plein Air des Chênes <Image
+                src={logoSrc} 
+                alt="Logo Sandaya"
+                height="30px"
+                mr={3}
+                objectFit="contain"
+              />
+              </Text>
+              
+            }
+          </Flex>
 
           {/* Navigation */}
           <HStack spacing={4}>

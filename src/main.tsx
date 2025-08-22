@@ -13,14 +13,14 @@ import theme from "./theme/index.ts";
 import { AuthProvider } from "./features/auth/useAuth.ts";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PlanningAnimation from "./pages/PlanningAnimation";
-
+import logoSandaya from "./assets/logo-sandaya.png";
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
   {
     path: "/",
     element: (
-      <Layout>
+      <Layout logoSrc={logoSandaya}>
         <Home />
       </Layout>
     ),
@@ -46,15 +46,15 @@ const router = createBrowserRouter([
     ),
   },
   {
-  path: "/animations",
-  element: (
-    <Layout>
-      <ProtectedRoute>
-        <PlanningAnimation />
-      </ProtectedRoute>
-    </Layout>
-  ),
-},
+    path: "/animations",
+    element: (
+      <Layout>
+        <ProtectedRoute>
+          <PlanningAnimation />
+        </ProtectedRoute>
+      </Layout>
+    ),
+  },
 ]);
 
 createRoot(document.getElementById("root")!).render(
