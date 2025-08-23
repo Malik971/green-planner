@@ -14,6 +14,8 @@ import { AuthProvider } from "./features/auth/useAuth.ts";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PlanningAnimation from "./pages/PlanningAnimation";
 import logoSandaya from "./assets/logo-sandaya.png";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
@@ -61,7 +63,9 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ChakraProvider theme={theme}>
       <AuthProvider>
-        <RouterProvider router={router} />
+        <DndProvider backend={HTML5Backend}>
+          <RouterProvider router={router} />
+        </DndProvider>
       </AuthProvider>
     </ChakraProvider>
   </StrictMode>

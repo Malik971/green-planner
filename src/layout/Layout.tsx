@@ -26,20 +26,27 @@ export default function Layout({ children, logoSrc }: LayoutProps) {
   return (
     <Flex direction="column" minHeight="100vh">
       {/* Header */}
-      <Box as="header" bg="sandaya.doré" color="white" py={4} px={8} shadow="sm">
+      <Box
+        as="header"
+        bg="sandaya.doré"
+        color="white"
+        py={4}
+        px={8}
+        shadow="sm"
+      >
         <Flex justify="space-between" align="center">
           <Flex align="center" cursor="pointer" onClick={() => navigate("/")}>
             {
               <Text fontSize="xl" fontWeight="bold">
-                Sandaya – Plein Air des Chênes <Image
-                src={logoSrc} 
-                alt="Logo Sandaya"
-                height="30px"
-                mr={3}
-                objectFit="contain"
-              />
+                Sandaya – Plein Air des Chênes{" "}
+                <Image
+                  src={logoSrc}
+                  alt="Logo Sandaya"
+                  height="30px"
+                  mr={3}
+                  objectFit="contain"
+                />
               </Text>
-              
             }
           </Flex>
 
