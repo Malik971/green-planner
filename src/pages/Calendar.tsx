@@ -26,7 +26,9 @@ import {
 } from "firebase/firestore";
 import { useParams } from "react-router-dom";
 import { db } from "../services/firebase";
-import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
+import withDragAndDrop, {
+  type DragFromOutsideItemArgs,
+} from "react-big-calendar/lib/addons/dragAndDrop";
 import { useDrag, DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
@@ -76,10 +78,11 @@ type EventType = {
 export default function CalendarPage() {
   const { team } = useParams();
   const [events, setEvents] = useState<EventType[]>([]);
-  const [draggedActivity, setDraggedActivity] = useState<null | {
+  // ← “prototype” en cours de drag (pas un event final)
+  const [draggedActivity, setDraggedActivity] = useState<{
     title: string;
     duration: number;
-  }>(null);
+  } | null>(null);
 
   useEffect(() => {
     if (!team) return;
@@ -103,8 +106,22 @@ export default function CalendarPage() {
     return () => unsubscribe();
   }, [team]);
 
+  // 👇 mapping pratique animateur → couleur
+  const legendMap: Record<string, string> = legend.reduce(
+    (acc, l) => ({ ...acc, [l.name]: l.color }),
+    {}
+  );
+
   // Déplacement d’un event déjà existant
-  const handleEventDrop = async ({ event, start, end }: any) => {
+  const handleEventDrop = async ({
+    event,
+    start,
+    end,
+  }: {
+    event: EventType;
+    start: Date;
+    end: Date;
+  }) => {
     if (!team || !event.id) return;
     const ref = doc(db, `events-${team}`, event.id);
     await updateDoc(ref, {
@@ -164,7 +181,7 @@ export default function CalendarPage() {
     };
   };
 
-  // Composant bulle draggable
+  // Composant Bulle draggable (react-dnd v14 : utiliser `item` + `end`)
   const ActivityBubble = ({
     activity,
   }: {
@@ -172,15 +189,18 @@ export default function CalendarPage() {
   }) => {
     const [{ isDragging }, drag] = useDrag(() => ({
       type: "ACTIVITY",
+      // quand on commence à dragger, on mémorise le prototype
       item: () => {
-        setDraggedActivity(activity); // 👈 appelé automatiquement quand on commence le drag
+        setDraggedActivity(activity);
         return activity;
-      },  
+      },
+      end: () => {
+        // fin de drag (réussi ou non) → on nettoie
+        setDraggedActivity(null);
+      },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
-      // begin: () => setDraggedActivity(activity),
-      end: () => setDraggedActivity(null),
     }));
 
     return (
@@ -270,10 +290,11 @@ export default function CalendarPage() {
               defaultView="week"
               resizable
               draggableAccessor={() => true}
-              onEventDrop={handleEventDrop}
+              onEventDrop={handleEventDrop as any}
               onEventResize={handleEventResize}
-              dragFromOutsideItem={dragFromOutsideItem}
+              dragFromOutsideItem={dragFromOutsideItem as any}
               onDropFromOutside={handleDropFromOutside}
+              onDragOver={(e) => e.preventDefault()}
               min={new Date(1970, 1, 1, 10, 0)}
               max={new Date(1970, 1, 1, 23, 0)}
               messages={{
@@ -285,6 +306,13 @@ export default function CalendarPage() {
                 day: "Jour",
                 agenda: "Agenda",
               }}
+              // ✅ Formats FR : heures et jours
+              formats={{
+                timeGutterFormat: (date, culture, localizer) =>
+                  localizer ? localizer.format(date, "HH'h'", culture) : "", // ex: 10h, 11h
+                dayFormat: (date, culture, localizer) =>
+                  localizer ? localizer.format(date, "EEE dd", culture) : "", // ex: lun 18, mar 19
+              }}
               slotPropGetter={(date) => {
                 const hour = date.getHours();
                 if (hour >= 10 && hour < 13)
@@ -294,6 +322,24 @@ export default function CalendarPage() {
                 if (hour >= 21 && hour < 23)
                   return { style: { backgroundColor: "#e2e2f8ff" } };
                 return { style: { backgroundColor: "white" } };
+              }}
+              // 👇 coloration des événements
+              eventPropGetter={(event) => {
+                // on cherche si le titre contient le nom d’un animateur connu
+                const found = Object.keys(legendMap).find((name) =>
+                  event.title.toLowerCase().includes(name.toLowerCase())
+                );
+
+                const color = found ? legendMap[found] : "#3182CE"; // bleu par défaut
+                return {
+                  style: {
+                    backgroundColor: color,
+                    color: "white",
+                    borderRadius: "6px",
+                    padding: "2px 4px",
+                    border: "none",
+                  },
+                };
               }}
             />
           </Box>
