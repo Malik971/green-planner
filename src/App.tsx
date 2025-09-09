@@ -1,10 +1,9 @@
 import { useAuth } from "./features/auth/useAuth";
 
 function App() {
-  const { user, loading, error } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) return <div>Chargement...</div>;
-  if (error) return <div>Erreur : {error.message}</div>;
 
   return (
     <div>
