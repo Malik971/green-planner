@@ -26,9 +26,7 @@ import {
 } from "firebase/firestore";
 import { useParams } from "react-router-dom";
 import { db } from "../services/firebase";
-import withDragAndDrop, {
-  type DragFromOutsideItemArgs,
-} from "react-big-calendar/lib/addons/dragAndDrop";
+import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { useDrag, DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
