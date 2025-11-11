@@ -30,7 +30,7 @@ const router = createBrowserRouter([
   {
     path: "/calendar/:team",
     element: (
-      <Layout>
+      <Layout logoSrc={logoSandaya}>
         <ProtectedRoute>
           <CalendarPage />
         </ProtectedRoute>
@@ -40,7 +40,7 @@ const router = createBrowserRouter([
   {
     path: "/calendar/bar",
     element: (
-      <Layout>
+      <Layout logoSrc={logoSandaya}>
         <ProtectedRoute allowed={["admin", "manager"]}>
           <PlanningBar />
         </ProtectedRoute>
@@ -50,7 +50,7 @@ const router = createBrowserRouter([
   {
     path: "/animations",
     element: (
-      <Layout>
+      <Layout logoSrc={logoSandaya}>
         <ProtectedRoute>
           <PlanningAnimation />
         </ProtectedRoute>

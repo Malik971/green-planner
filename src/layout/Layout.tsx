@@ -34,20 +34,18 @@ export default function Layout({ children, logoSrc }: LayoutProps) {
         px={8}
         shadow="sm"
       >
-        <Flex justify="space-between" align="center">
+        <Flex justify="space-between" align="center" direction="row">
           <Flex align="center" cursor="pointer" onClick={() => navigate("/")}>
-            {
               <Text fontSize="xl" fontWeight="bold">
                 Sandaya – Plein Air des Chênes{" "}
+              </Text>
                 <Image
                   src={logoSrc}
                   alt="Logo Sandaya"
-                  height="30px"
+                  height="50px"
                   mr={3}
                   objectFit="contain"
                 />
-              </Text>
-            }
           </Flex>
 
           {/* Navigation */}
